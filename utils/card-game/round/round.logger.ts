@@ -1,4 +1,4 @@
-import type { ApiCard, PlayerId, RoundSummary } from '../domain/types';
+import type { CardResponse, PlayerId, RoundSummary } from '../domain/types';
 import { evaluateHand } from '../domain/blackjack';
 
 type PlayerSummary = {
@@ -11,7 +11,7 @@ type PlayerSummary = {
 };
 
 export class RoundLogger {
-  summarizeRound(input: { deckId: string; hands: Record<PlayerId, ApiCard[]> }): RoundSummary {
+  summarizeRound(input: { deckId: string; hands: Record<PlayerId, CardResponse[]> }): RoundSummary {
     const [s1, s2] = (['P1', 'P2'] as const).map((playerId) =>
       buildPlayerSummary(playerId, input.hands[playerId]),
     );
@@ -27,14 +27,14 @@ export class RoundLogger {
     // Needed to follow exercise logic
     // eslint-disable-next-line no-console
     console.log(
-      `[deck ${input.deckId}] ${formatPlayerSummary(s1)} | ${formatPlayerSummary(s2,)} → winner: ${winner ?? 'n/a'}`,
+      `[deck ${input.deckId}] ${formatPlayerSummary(s1)} | ${formatPlayerSummary(s2)} → winner: ${winner ?? 'n/a'}`,
     );
 
     return summary;
   }
 }
 
-function buildPlayerSummary(playerId: PlayerId, cards: ApiCard[]): PlayerSummary {
+function buildPlayerSummary(playerId: PlayerId, cards: CardResponse[]): PlayerSummary {
   const evaluated = evaluateHand(cards);
   return {
     playerId,
@@ -51,7 +51,7 @@ function formatPlayerSummary(s: PlayerSummary): string {
     .filter(Boolean)
     .join(',');
   const hardSoft = s.isSoft ? 'soft' : 'hard';
-  return `${s.playerId}:${s.codes.join(',')} (${s.score},${hardSoft}${tags ? ',' + tags : ''})`;
+  return `${s.playerId}:${s.codes.join(',')} (${s.score},${hardSoft}${tags ? `,${tags}` : ''})`;
 }
 
 function decideWinner(

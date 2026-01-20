@@ -1,8 +1,8 @@
 import { test as base, expect } from '@playwright/test';
 import { DeckService } from '../services/deck.service';
-import { RoundEngine } from '../round/round.engine';
+import RoundEngine from '../round/round.engine';
 import { RoundLogger } from '../round/round.logger';
-import { CardsHomePage} from '../pages/home.page';
+import { CardsHomePage } from '../pages/home.page';
 
 export type CardGameFixtures = {
   cardsHomePage: CardsHomePage;

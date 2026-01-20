@@ -6,11 +6,11 @@ CI: GitHub Actions — ready-to-use pipelines for tests (all/checkers/cards). Se
 
 ## Tech stack
 
-* **Playwright** (latest) — UI + API testing
-* **TypeScript** (strict, `noImplicitAny: true`)
-* **Node.js LTS** (18.x or 20.x)
-* **ESLint + Prettier** — style & static checks
-* **Reports**: Playwright HTML + JUnit XML (paths configured in `playwright.config.ts`)
+- **Playwright** (latest) — UI + API testing
+- **TypeScript** (strict, `noImplicitAny: true`)
+- **Node.js LTS** (18.x or 20.x)
+- **ESLint + Prettier** — style & static checks
+- **Reports**: Playwright HTML + JUnit XML (paths configured in `playwright.config.ts`)
 
 ## Prerequisites
 
@@ -40,7 +40,7 @@ tests/
   exercies_2/                # Cards API/engine suite
     cards.game.spec.ts
 
-.github/workflows/           # CI 
+.github/workflows/           # CI
 ```
 
 ## One-time local setup
@@ -84,6 +84,6 @@ npx playwright show-report
 
 ### Reports & artifacts (after a run)
 
-* **JUnit**: `tests-report/junit/junit.xml`
-* **HTML**: `tests-report/html/` (opened by `npx playwright show-report`)
-* **Artifacts** under `tests-output/` (via `use: { trace, screenshot, video, outputDir }`)
+- **JUnit**: `tests-report/junit/junit.xml`
+- **HTML**: `tests-report/html/` (opened by `npx playwright show-report`)
+- **Artifacts** under `tests-output/` (via `use: { trace, screenshot, video, outputDir }`)

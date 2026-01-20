@@ -1,21 +1,22 @@
 import { evaluateHand } from '../domain/blackjack';
-import { DeckService } from '../services/deck.service';
-import { RoundLogger } from './round.logger';
+import type { DeckService } from '../services/deck.service';
+import type { RoundLogger } from './round.logger';
 import type {
   ApiCallResult,
-  ApiCard,
+  CardResponse,
   DrawResponse,
   NewDeckResponse,
   PlayerId,
+  RoundSummary,
   ShuffleResponse,
 } from '../domain/types';
 
 export interface RoundState {
   deckId: string | null;
-  hands: Record<PlayerId, ApiCard[]>;
+  hands: Record<PlayerId, CardResponse[]>;
 }
 
-export class RoundEngine {
+class RoundEngine {
   private readonly logger: RoundLogger;
   private readonly deck: DeckService;
   private state: RoundState = {
@@ -47,7 +48,7 @@ export class RoundEngine {
 
   /** Deal initial 2 cards each in sequence: P1 → P2 → P1 → P2 */
   async dealInitial(): Promise<
-    ApiCallResult<DrawResponse> & { dealt?: Record<PlayerId, ApiCard[]> }
+    ApiCallResult<DrawResponse> & { dealt?: Record<PlayerId, CardResponse[]> }
   > {
     if (!this.state.deckId) return this.noDeckResult<DrawResponse>();
 
@@ -60,11 +61,13 @@ export class RoundEngine {
   }
 
   /** Draw one card for the specified player. */
-  async hit(player: PlayerId) {
+  async hit(player: PlayerId): Promise<ApiCallResult<DrawResponse>> {
     if (!this.state.deckId) return this.noDeckResult<DrawResponse>();
+
     const draw = await this.deck.draw(this.state.deckId, 1);
     const card = draw.data?.cards?.[0];
     if (card) this.state.hands[player].push(card);
+
     return draw;
   }
 
@@ -77,14 +80,13 @@ export class RoundEngine {
     };
   }
 
-  getHands() {
+  getHands(): { P1: CardResponse[]; P2: CardResponse[] } {
     const { P1, P2 } = this.state.hands;
     return { P1: [...P1], P2: [...P2] };
   }
 
-
   /** Summarize + log round state (non-destructive). */
-  summarizeAndLog() {
+  summarizeAndLog(): RoundSummary {
     return this.logger.summarizeRound({
       deckId: this.state.deckId ?? 'unknown',
       hands: this.getHands(),
@@ -95,3 +97,5 @@ export class RoundEngine {
     return { response: undefined as any };
   }
 }
+
+export default RoundEngine;

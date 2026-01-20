@@ -10,6 +10,12 @@ export interface Square {
 
 export type Board = Square[][]; // [row][col], 1-based stored at index r-1/c-1
 
-export interface Coordinates { r: number; c: number }
+export interface Coordinates {
+  r: number;
+  c: number;
+}
 
-export interface Move { from: Coordinates; to: Coordinates }
+export interface Move {
+  from: Coordinates;
+  to: Coordinates;
+}

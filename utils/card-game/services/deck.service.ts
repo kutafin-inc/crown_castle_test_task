@@ -4,7 +4,7 @@ import type {
   DrawResponse,
   NewDeckResponse,
   ShuffleResponse,
-  ApiCard,
+  CardResponse,
   PlayerId,
 } from '../domain/types';
 
@@ -20,6 +20,7 @@ async function asJson<T>(resp: APIResponse): Promise<ApiCallResult<T>> {
 export class DeckService {
   private readonly request: APIRequestContext;
   private readonly apiBase = '/api/deck';
+
   constructor(request: APIRequestContext) {
     this.request = request;
   }
@@ -51,7 +52,7 @@ export class DeckService {
     deckId: string,
     players: PlayerId[],
     cardsPerPlayer: number,
-  ): Promise<ApiCallResult<DrawResponse> & { dealt?: Record<PlayerId, ApiCard[]> }> {
+  ): Promise<ApiCallResult<DrawResponse> & { dealt?: Record<PlayerId, CardResponse[]> }> {
     const total = players.length * cardsPerPlayer;
     const result = await this.draw(deckId, total);
     if (!result.data?.cards) return { ...result };
@@ -60,10 +61,11 @@ export class DeckService {
       return { ...result };
     }
 
-    // Explicitly initialize the two known PlayerId keys to satisfy Record<PlayerId, ApiCard[]>
-    const dealt: Record<PlayerId, ApiCard[]> = { P1: [], P2: [] };
+    // Explicitly initialize the two known PlayerId keys to satisfy Record<PlayerId, CardResponse[]>
+    const dealt: Record<PlayerId, CardResponse[]> = { P1: [], P2: [] };
 
     // Preserve deck order: P1 → P2 → P1 → P2 ...
+    // Remainder 0 % 2 → 0 (P1), 1 % 2 → 1 (P2), 2 % 2 → 0 (P1), etc.
     result.data.cards.forEach((card, idx) => {
       const pid: PlayerId = players[idx % players.length];
       dealt[pid].push(card);

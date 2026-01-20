@@ -10,6 +10,13 @@ export default defineConfig({
   reporter: [
     ['junit', { outputFile: 'tests-report/junit/junit.xml' }],
     ['html', { open: 'never', outputFolder: 'tests-report/html' }],
+    [
+      '@m00nsolutions/playwright-reporter',
+      {
+        serverUrl: 'https://app.m00n.report',
+        apiKey: 'm00n_6b30c5df61eaba94b95019a4751691beeaabfd2cbea816b5', // Your project API key
+      },
+    ],
   ],
   projects: [
     {
@@ -19,9 +26,9 @@ export default defineConfig({
         trace: 'on-first-retry',
         screenshot: 'only-on-failure',
         video: 'retain-on-failure',
-        baseURL: process.env.CHECKERS_URL || 'https://www.gamesforthebrain.com/game/checkers/',
-        headless: true,
-        actionTimeout: 10_000
+        baseURL: process.env.CHECKERS_URL ?? 'https://www.gamesforthebrain.com/game/checkers/',
+        headless: false,
+        actionTimeout: 10_000,
       },
     },
     {
@@ -31,9 +38,9 @@ export default defineConfig({
         trace: 'on-first-retry',
         screenshot: 'only-on-failure',
         video: 'retain-on-failure',
-        baseURL: process.env.CARDS_API_URL || 'https://deckofcardsapi.com/',
+        baseURL: process.env.CARDS_API_URL ?? 'https://deckofcardsapi.com/',
         channel: 'chrome',
-        headless: true
+        headless: true,
       },
     },
   ],

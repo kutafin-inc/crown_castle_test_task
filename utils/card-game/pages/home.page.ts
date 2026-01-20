@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import type { Page, Locator } from '@playwright/test';
 
 /**
  * Minimal POM to verify the site is reachable (HTML title check).
@@ -14,7 +14,7 @@ export class CardsHomePage {
     this.subtitle = page.locator('//h3[@class="subtitle"]');
   }
 
-  async open() {
+  async open(): Promise<void> {
     await this.page.goto('/');
   }
 }

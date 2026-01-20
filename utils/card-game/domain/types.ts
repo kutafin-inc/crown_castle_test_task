@@ -1,4 +1,5 @@
-import { APIResponse } from '@playwright/test';
+import type { APIResponse } from '@playwright/test';
+
 export type Suit = 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS';
 export type Rank =
   | 'ACE'
@@ -15,11 +16,11 @@ export type Rank =
   | 'QUEEN'
   | 'KING';
 
-export interface ApiCard {
+export interface CardResponse {
   code: string; // e.g., "AS" (Ace of Spades), "0D" (Ten of Diamonds)
   image: string;
   images?: { svg: string; png: string };
-  value: string; // API returns e.g., "ACE", "KING", "2" ...
+  value: Rank;
   suit: Suit;
 }
 
@@ -40,7 +41,7 @@ export interface ShuffleResponse {
 export interface DrawResponse {
   success: boolean;
   deck_id: string;
-  cards: ApiCard[];
+  cards: CardResponse[];
   remaining: number;
 }
 
@@ -73,6 +74,7 @@ export interface ApiCallResult<T> {
   data?: T;
 }
 
-export function cardCodeList(cards: ApiCard[]): string[] {
+// Was going to use this for the logger
+export function cardCodeList(cards: CardResponse[]): string[] {
   return cards.map((c) => c.code);
 }

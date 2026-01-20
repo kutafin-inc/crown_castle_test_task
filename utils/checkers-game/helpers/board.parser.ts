@@ -1,7 +1,7 @@
 import type { Board, Square } from './board.types';
 
-// Checking if this square is playable (even/odd row)
-export function isPlayable(r: number, c: number) {
+// Checking if this square is playable (even/odd row )
+export function isPlayable(r: number, c: number) : boolean {
   return (r + c) % 2 === 0;
 }
 
@@ -28,23 +28,26 @@ export function emptyBoard(): Board {
   return rows;
 }
 
-export function setSquare(board: Board, r: number, c: number, square: Partial<Square>) {
-  // DOM is 0-based, board is 1-based, way more convenient to use 1-based
+// Partial means you can pass only the Square fields you want to update (e.g., just piece and king), not the whole Square
+// DOM is 0-based, board is 1-based, way more convenient to use 1-based
+export function setSquare(board: Board, r: number, c: number, square: Partial<Square>) : void {
   const sq = board[r - 1][c - 1];
   Object.assign(sq, square);
 }
 
-export function pieceAt(board: Board, r: number, c: number) {
+export function pieceAt(board: Board, r: number, c: number): "orange" | "blue" | null {
   return board[r - 1][c - 1]?.piece ?? null;
 }
 
-export function countPieces(board: Board) {
+export function countPieces(board: Board): { orange: number; blue: number } {
   let orange = 0,
     blue = 0;
+
   for (const row of board)
     for (const sq of row) {
       if (sq.piece === 'orange') orange++;
       else if (sq.piece === 'blue') blue++;
     }
+
   return { orange, blue };
 }

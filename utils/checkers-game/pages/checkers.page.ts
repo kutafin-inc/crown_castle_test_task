@@ -19,15 +19,15 @@ export class CheckersPage {
     this.restartLink = page.locator('//a[text()="Restart..."]');
   }
 
-  async goto() {
+  async goto(): Promise<void> {
     await this.page.goto('');
   }
 
-  async getStatusText(): Promise<string | null> {
-    return await this.makeMoveText.textContent();
+  getStatusText(): Promise<string | null> {
+    return this.makeMoveText.textContent();
   }
 
-  async readCounts() {
+  async readCounts(): Promise<{ orange: number; blue: number }> {
     const orange = await this.orangePieces.count();
     const blue = await this.bluePieces.count();
 
@@ -35,25 +35,25 @@ export class CheckersPage {
   }
 
   async pieceAt(r: number, c: number): Promise<Piece> {
-    const src = (await this.cell(r, c).getAttribute('src')) || '';
+    const src = (await this.cell(r, c).getAttribute('src')) ?? '';
     const low = src.toLowerCase();
     if (low.includes('you')) return 'orange';
     if (low.includes('me')) return 'blue';
     return null;
   }
 
-  async makeMoveByCoords(r1: number, c1: number, r2: number, c2: number) {
+  async makeMoveByCoords(r1: number, c1: number, r2: number, c2: number): Promise<void> {
     //Choose the square you want to move from
     await this.clickSquare(r1, c1);
     //Move the piece to the square you want to move to
     await this.clickSquare(r2, c2);
   }
 
-  async makeMove(move: Move) {
+  async makeMove(move: Move): Promise<void> {
     await this.makeMoveByCoords(move.from.r, move.from.c, move.to.r, move.to.c);
   }
 
-  async waitForOpponentMoveToFinish(r: number, c: number) {
+  async waitForOpponentMoveToFinish(r: number, c: number): Promise<void> {
     // Wait for the opponent's piece to appear at the specified location
     const name = `space${r - 1}${c - 1}`;
     await this.page
@@ -65,7 +65,7 @@ export class CheckersPage {
       .waitFor({ state: 'visible' });
   }
 
-  async restartGame() {
+  async restartGame(): Promise<void> {
     await this.restartLink.click();
   }
 
@@ -73,7 +73,7 @@ export class CheckersPage {
     const board = emptyBoard();
     for (let r = 1; r <= 8; r++) {
       for (let c = 1; c <= 8; c++) {
-        const src = (await this.cell(r, c).getAttribute('src')) || '';
+        const src = (await this.cell(r, c).getAttribute('src')) ?? '';
         const info = pieceFromSrc(src);
         setSquare(board, r, c, info);
       }
@@ -81,7 +81,13 @@ export class CheckersPage {
     return board;
   }
 
-  async playFiveScenarioMovesAndCounts(myMoves: Move[], opponentsMoves: { r: number; c: number }[]) {
+  async playFiveScenarioMovesAndCounts(
+    myMoves: Move[],
+    opponentsMoves: { r: number; c: number }[],
+  ): Promise<{
+    after4: { orange: number; blue: number };
+    after5: { orange: number; blue: number };
+  }> {
     const after4 = { orange: 0, blue: 0 };
     const after5 = { orange: 0, blue: 0 };
 
@@ -104,12 +110,13 @@ export class CheckersPage {
     return { after4, after5 };
   }
 
-  private cell(r: number, c: number) {
+  private cell(r: number, c: number): Locator {
     const name = `space${r - 1}${c - 1}`; // DOM is 0-based
+
     return this.page.locator(`//img[@name="${name}"]`);
   }
 
-  private async clickSquare(r: number, c: number) {
+  private async clickSquare(r: number, c: number): Promise<void> {
     const img = this.cell(r, c);
     await img.click();
   }
