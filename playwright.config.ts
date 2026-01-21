@@ -27,7 +27,7 @@ export default defineConfig({
         screenshot: 'only-on-failure',
         video: 'retain-on-failure',
         baseURL: process.env.CHECKERS_URL ?? 'https://www.gamesforthebrain.com/game/checkers/',
-        headless: false,
+        headless: true,
         actionTimeout: 10_000,
       },
     },
