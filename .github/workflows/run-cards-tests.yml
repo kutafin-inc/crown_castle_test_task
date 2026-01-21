@@ -64,7 +64,7 @@ jobs:
             --instance https://crowncastle.testmo.net \
             --project-id 2 \
             --name "Cards-${BRANCH}-${DATE}" \
-            --source "GitHub Actions" \
+            --source "GitHubActions" \
             --results tests-report/junit/junit.xml
 
       - name: Upload HTML report
