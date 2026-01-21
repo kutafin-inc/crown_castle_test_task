@@ -49,6 +49,24 @@ jobs:
         id: run-tests
         run: npx playwright test || true # don't fail the job; let report aggregate failures
 
+      - name: Install TestMo CLI
+        if: always()
+        run: npm install -g @testmo/testmo-cli
+
+      - name: Submit results to TestMo
+        if: always()
+        env:
+          TESTMO_API_KEY: ${{ secrets.TESTMO_API_KEY }}
+        run: |
+          DATE=$(date +'%Y-%m-%d_%H-%M-%S')
+          BRANCH="${{ github.ref_name }}"
+          testmo automation:run:submit \
+            --instance https://crowncastle.testmo.net \
+            --project-id 2 \
+            --name "All-${BRANCH}-${DATE}" \
+            --source "GitHub Actions" \
+            --results tests-report/junit/junit.xml
+
       - name: Upload HTML report
         if: always()
         uses: actions/upload-artifact@v4

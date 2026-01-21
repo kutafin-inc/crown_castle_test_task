@@ -14,7 +14,7 @@ export default defineConfig({
       '@m00nsolutions/playwright-reporter',
       {
         serverUrl: 'https://app.m00n.report',
-        apiKey: 'm00n_6b30c5df61eaba94b95019a4751691beeaabfd2cbea816b5', // Your project API key
+        apiKey: process.env.M00N_API_KEY, // Your project API key
       },
     ],
   ],
